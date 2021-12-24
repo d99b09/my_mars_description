@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+
+ <robot name="mars" xmlns:xacro="http://ros.org/wiki/xacro">
+
+<xacro:include filename="$(find my_mars_description)/urdf/materials.xacro" />
+
+<xacro:include filename="$(find my_mars_description)/urdf/mars_modul_macro.urdf.xacro" />
+
+<xacro:include filename="$(find my_mars_description)/urdf/mars_wheel_macro.urdf.xacro" />
+
+
+<xacro:include filename="$(find my_mars_description)/urdf/mars.gazebo.xacro" />
+<xacro:include filename="$(find my_mars_description)/urdf/mars.transmission.xacro" />
+
+  <link name="world"/>
+
+  <!-- World fixed joint-->
+  <joint name="world_fixed0" type="fixed">
+    <origin xyz="0 0 0.2" rpy="0 0 0"/>
+    <parent link="world"/>
+    <child link="back_connector_1"/>
+  </joint>
+
+<xacro:modul modul_num="1"/>
+  <xacro:modul modul_num="2"/>
+  <xacro:modul modul_num="3"/>
+  <xacro:modul modul_num="4"/>
+  <xacro:modul modul_num="5"/>
+  <xacro:modul modul_num="6"/>
+  <xacro:modul modul_num="7"/>
+  <xacro:modul modul_num="8"/>
+  <xacro:modul modul_num="9"/>
+  <xacro:modul modul_num="10"/>
+  <joint name="world_fixed1" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="front_connector_1"/>
+    <child link="back_connector_2"/>
+  </joint>
+  <joint name="world_fixed2" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="front_connector_2"/>
+    <child link="back_connector_3"/>
+  </joint>
+    <joint name="world_fixed3" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="front_connector_3"/>
+    <child link="back_connector_4"/>
+  </joint>
+    <joint name="world_fixed4" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="front_connector_4"/>
+    <child link="back_connector_5"/>
+  </joint>
+    <joint name="world_fixed5" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="front_connector_5"/>
+    <child link="back_connector_6"/>
+  </joint>
+    <joint name="front_fixed6" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="front_connector_6"/>
+    <child link="back_connector_7"/>
+  </joint>
+    <joint name="world_fixed7" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="front_connector_7"/>
+    <child link="back_connector_8"/>
+  </joint>
+    <joint name="world_fixed8" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="front_connector_8"/>
+    <child link="back_connector_9"/>
+  </joint>
+    <joint name="world_fixed9" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="front_connector_9"/>
+    <child link="back_connector_10"/>
+  </joint>  
+
+
+</robot>
+
+
+
+  

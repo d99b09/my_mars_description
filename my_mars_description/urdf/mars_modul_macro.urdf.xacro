@@ -1,0 +1,402 @@
+<?xml version="1.0"?>
+
+<robot name="modul1" xmlns:xacro="http://ros.org/wiki/xacro">
+
+<xacro:include filename="$(find my_mars_description)/urdf/inert.xacro" />
+
+
+<xacro:macro name="modul" params="modul_num">
+  <link name="bodyZ_${modul_num}">
+     <xacro:box_inertial w="0.07" h="0.035" d="0.02" m="0.05"/>
+    <collision>
+      <origin xyz="-0.05 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="-0.05 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+
+  </link>
+
+
+  <joint name="axial_roll_joint_${modul_num}" type="continuous">
+     <origin xyz="0.1375 0 0" rpy="0 0 0"/>
+     <parent link="bodyZ_${modul_num}" />
+     <child link="leverX_${modul_num}" />
+     <axis xyz="0 1 0"/>
+     <limit effort="100.0" lower="-${pi/2}" upper="${pi/2}" velocity="5.0" />
+   </joint>
+
+   <link name="leverX_${modul_num}">
+    <xacro:box_inertial w="0.07" h="0.125" d="0.02" m="0.25"/>
+    <collision>
+      <origin xyz="-0.1875 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link2.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="-0.1875 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link2.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+
+  </link>
+
+  <joint name="axial_pitch_joint_${modul_num}" type="continuous">
+     <origin xyz="0 0 0" rpy="0 0 0"/>
+     <parent link="leverX_${modul_num}" />
+     <child link="bodyX_${modul_num}" />
+     <axis xyz="1 0 0"/>
+     <limit effort="100.0" lower="-${pi/2}" upper="${pi/2}" velocity="5.0" />
+   </joint>
+
+   <link name="bodyX_${modul_num}">
+     <xacro:box_inertial w="0.07" h="0.035" d="0.02" m="0.05"/>
+    <collision>
+      <origin xyz="-0.1875 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link3.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="-0.1875 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link3.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="wheel_fixed1_${modul_num}" type="fixed">
+    <origin xyz="-0.01 0.065 0" rpy="0 0 ${pi/4}" />
+    <parent link="bodyZ_${modul_num}" />
+    <child link="empty_wheel_1_${modul_num}" />
+  </joint> 
+
+  <xacro:wheel wheel_num="1" modul_num="${modul_num}"/>-->
+
+  <joint name="wheel_fixed2_${modul_num}" type="fixed">
+    <origin xyz="-0.01 -0.065 0" rpy="0 0 -${pi/4}" />
+    <parent link="bodyZ_${modul_num}" />
+    <child link="empty_wheel_2_${modul_num}" />
+  </joint> 
+
+  <xacro:wheel wheel_num="2" modul_num="${modul_num}"/>-->
+
+  <joint name="wheel_fixed3_${modul_num}" type="fixed">
+    <origin xyz="0.15 0.065 0" rpy="0 0 -${pi/4}" />
+    <parent link="bodyX_${modul_num}" />
+    <child link="empty_wheel_3_${modul_num}" />
+  </joint> 
+
+  <xacro:wheel wheel_num="3" modul_num="${modul_num}"/>-->
+
+  <joint name="wheel_fixed4_${modul_num}" type="fixed">
+    <origin xyz="0.15 -0.065 0" rpy="0 0 ${pi/4}" />
+    <parent link="bodyX_${modul_num}" />
+    <child link="empty_wheel_4_${modul_num}" />
+  </joint> 
+
+  <xacro:wheel wheel_num="4" modul_num="${modul_num}"/>-->
+
+   <joint name="left_connector_joint_${modul_num}" type="fixed">
+    <origin xyz="0.1375 0.04 0" rpy="0 0 0" />
+    <parent link="bodyZ_${modul_num}" />
+    <child link="left_connector_${modul_num}" />
+  </joint>
+  <xacro:empty_link name="left_connector_${modul_num}"/>
+
+   <joint name="right_connector_joint_${modul_num}" type="fixed">
+    <origin xyz="0.1375 -0.038 0" rpy="0 0 0" />
+    <parent link="bodyZ_${modul_num}" />
+    <child link="right_connector_${modul_num}" />
+  </joint>   
+  <xacro:empty_link name="right_connector_${modul_num}"/>
+
+   <joint name="back_connector_joint_${modul_num}" type="fixed">
+    <origin xyz="0.04 0 0" rpy="0 0 0" />
+    <parent link="back_connector_${modul_num}"/>
+    <child link="bodyZ_${modul_num}" />
+  </joint> 
+  <xacro:empty_link name="back_connector_${modul_num}"/>
+
+   <joint name="front_connector_joint_${modul_num}" type="fixed">
+    <origin xyz="0.1775 0 0" rpy="0 0 0" />
+    <parent link="bodyX_${modul_num}" />
+    <child link="front_connector_${modul_num}" />
+  </joint> 
+  <xacro:empty_link name="front_connector_${modul_num}"/>
+</xacro:macro>
+
+<xacro:macro name="modul_left" params="modul_num">
+  <link name="bodyZ_${modul_num}">
+    <xacro:empty_inertial />
+    <collision>
+      <origin xyz="-0.05 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="-0.05 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+
+  </link>
+
+
+  <joint name="axial_roll_joint_${modul_num}" type="revolute">
+     <origin xyz="0.1375 0 0" rpy="0 0 0"/>
+     <parent link="bodyZ_${modul_num}" />
+     <child link="leverX_${modul_num}" />
+     <axis xyz="0 1 0"/>
+     <limit effort="100.0" lower="-${pi/2}" upper="${pi/2}" velocity="5.0" />
+   </joint>
+
+   <link name="leverX_${modul_num}">
+    <xacro:empty_inertial />
+    <collision>
+      <origin xyz="-0.1875 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link2.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="-0.1875 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link2.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+
+  </link>
+
+  <joint name="axial_pitch_joint_${modul_num}" type="revolute">
+     <origin xyz="0 0 0" rpy="0 0 0"/>
+     <parent link="leverX_${modul_num}" />
+     <child link="bodyX_${modul_num}" />
+     <axis xyz="1 0 0"/>
+     <limit effort="100.0" lower="-${pi/2}" upper="${pi/2}" velocity="5.0" />
+   </joint>
+
+   <link name="bodyX_${modul_num}">
+    <xacro:empty_inertial />
+    <collision>
+      <origin xyz="-0.1875 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link3.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="-0.1875 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link3.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="wheel_fixed1_${modul_num}" type="fixed">
+    <origin xyz="-0.01 0.065 0" rpy="0 0 ${pi/4}" />
+    <parent link="bodyZ_${modul_num}" />
+    <child link="empty_wheel_1_${modul_num}" />
+  </joint> 
+
+  <xacro:wheel wheel_num="1" modul_num="${modul_num}"/>-->
+
+  <joint name="wheel_fixed2_${modul_num}" type="fixed">
+    <origin xyz="-0.01 -0.065 0" rpy="0 0 -${pi/4}" />
+    <parent link="bodyZ_${modul_num}" />
+    <child link="empty_wheel_2_${modul_num}" />
+  </joint> 
+
+  <xacro:wheel wheel_num="2" modul_num="${modul_num}"/>-->
+
+  <joint name="wheel_fixed3_${modul_num}" type="fixed">
+    <origin xyz="0.15 0.065 0" rpy="0 0 -${pi/4}" />
+    <parent link="bodyX_${modul_num}" />
+    <child link="empty_wheel_3_${modul_num}" />
+  </joint> 
+
+  <xacro:wheel wheel_num="3" modul_num="${modul_num}"/>-->
+
+  <joint name="wheel_fixed4_${modul_num}" type="fixed">
+    <origin xyz="0.15 -0.065 0" rpy="0 0 ${pi/4}" />
+    <parent link="bodyX_${modul_num}" />
+    <child link="empty_wheel_4_${modul_num}" />
+  </joint> 
+
+  <xacro:wheel wheel_num="4" modul_num="${modul_num}"/>-->
+
+   <joint name="left_connector_joint_${modul_num}" type="fixed">
+    <origin xyz="-0.1375 -0.04 0" rpy="0 0 0" />
+    <parent link="left_connector_${modul_num}" />
+    <child link="bodyZ_${modul_num}" />
+  </joint>
+  <xacro:empty_link name="left_connector_${modul_num}"/>
+
+   <joint name="right_connector_joint_${modul_num}" type="fixed">
+    <origin xyz="0.1375 -0.038 0" rpy="0 0 0" />
+    <parent link="bodyZ_${modul_num}" />
+    <child link="right_connector_${modul_num}" />
+  </joint>   
+  <xacro:empty_link name="right_connector_${modul_num}"/>
+
+   <joint name="back_connector_joint_${modul_num}" type="fixed">
+    <origin xyz="0.04 0 0" rpy="0 0 0" />
+    <parent link="bodyZ_${modul_num}"/>
+    <child link="back_connector_${modul_num}" />
+  </joint> 
+  <xacro:empty_link name="back_connector_${modul_num}"/>
+
+   <joint name="front_connector_joint_${modul_num}" type="fixed">
+    <origin xyz="0.1775 0 0" rpy="0 0 0" />
+    <parent link="bodyX_${modul_num}" />
+    <child link="front_connector_${modul_num}" />
+  </joint> 
+  <xacro:empty_link name="front_connector_${modul_num}"/>
+</xacro:macro>
+
+<xacro:macro name="modul_right" params="modul_num">
+  <link name="bodyZ_${modul_num}">
+    <xacro:empty_inertial />
+    <collision>
+      <origin xyz="-0.05 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="-0.05 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+
+  </link>
+
+
+  <joint name="axial_roll_joint_${modul_num}" type="revolute">
+     <origin xyz="0.1375 0 0" rpy="0 0 0"/>
+     <parent link="bodyZ_${modul_num}" />
+     <child link="leverX_${modul_num}" />
+     <axis xyz="0 1 0"/>
+     <limit effort="100.0" lower="-${pi/2}" upper="${pi/2}" velocity="5.0" />
+   </joint>
+
+   <link name="leverX_${modul_num}">
+    <xacro:empty_inertial />
+    <collision>
+      <origin xyz="-0.1875 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link2.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="-0.1875 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link2.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="axial_pitch_joint_${modul_num}" type="revolute">
+     <origin xyz="0 0 0" rpy="0 0 0"/>
+     <parent link="leverX_${modul_num}" />
+     <child link="bodyX_${modul_num}" />
+     <axis xyz="1 0 0"/>
+     <limit effort="100.0" lower="-${pi/2}" upper="${pi/2}" velocity="5.0" />
+   </joint>
+
+   <link name="bodyX_${modul_num}">
+    <xacro:empty_inertial />
+    <collision>
+      <origin xyz="-0.1875 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link3.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="-0.1875 0.108 -0.045" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://my_mars_description/meshes/link3.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="wheel_fixed1_${modul_num}" type="fixed">
+    <origin xyz="-0.01 0.065 0" rpy="0 0 ${pi/4}" />
+    <parent link="bodyZ_${modul_num}" />
+    <child link="empty_wheel_1_${modul_num}" />
+  </joint> 
+
+  <xacro:wheel wheel_num="1" modul_num="${modul_num}"/>-->
+
+  <joint name="wheel_fixed2_${modul_num}" type="fixed">
+    <origin xyz="-0.01 -0.065 0" rpy="0 0 -${pi/4}" />
+    <parent link="bodyZ_${modul_num}" />
+    <child link="empty_wheel_2_${modul_num}" />
+  </joint> 
+
+  <xacro:wheel wheel_num="2" modul_num="${modul_num}"/>-->
+
+  <joint name="wheel_fixed3_${modul_num}" type="fixed">
+    <origin xyz="0.15 0.065 0" rpy="0 0 -${pi/4}" />
+    <parent link="bodyX_${modul_num}" />
+    <child link="empty_wheel_3_${modul_num}" />
+  </joint> 
+
+  <xacro:wheel wheel_num="3" modul_num="${modul_num}"/>-->
+
+  <joint name="wheel_fixed4_${modul_num}" type="fixed">
+    <origin xyz="0.15 -0.065 0" rpy="0 0 ${pi/4}" />
+    <parent link="bodyX_${modul_num}" />
+    <child link="empty_wheel_4_${modul_num}" />
+  </joint> 
+
+  <xacro:wheel wheel_num="4" modul_num="${modul_num}"/>-->
+
+   <joint name="left_connector_joint_${modul_num}" type="fixed">
+    <origin xyz="0.1375 0.04 0" rpy="0 0 0" />
+    <parent link="bodyZ_${modul_num}" />
+    <child link="left_connector_${modul_num}" />
+  </joint>
+  <xacro:empty_link name="left_connector_${modul_num}"/>
+
+   <joint name="right_connector_joint_${modul_num}" type="fixed">
+    <origin xyz="-0.1375 0.038 0" rpy="0 0 0" />
+    <parent link="right_connector_${modul_num}" />
+    <child link="bodyZ_${modul_num}" />
+  </joint>   
+  <xacro:empty_link name="right_connector_${modul_num}"/>
+
+   <joint name="back_connector_joint_${modul_num}" type="fixed">
+    <origin xyz="-0.04 0 0" rpy="0 0 0" />
+    <parent link="bodyZ_${modul_num}"/>
+    <child link="back_connector_${modul_num}"/>
+  </joint> 
+  <xacro:empty_link name="back_connector_${modul_num}"/>
+
+   <joint name="front_connector_joint_${modul_num}" type="fixed">
+    <origin xyz="0.1775 0 0" rpy="0 0 0" />
+    <parent link="bodyX_${modul_num}" />
+    <child link="front_connector_${modul_num}" />
+  </joint> 
+  <xacro:empty_link name="front_connector_${modul_num}"/>
+</xacro:macro>
+
+
+
+
+
+
+
+
+
+</robot>

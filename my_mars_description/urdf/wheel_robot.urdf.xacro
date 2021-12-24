@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+ <robot name="mars" xmlns:xacro="http://ros.org/wiki/xacro">
+
+<xacro:include filename="$(find my_mars_description)/urdf/materials.xacro" />
+
+
+
+<xacro:include filename="$(find my_mars_description)/urdf/mars_wheel_macro.urdf.xacro" />
+
+  <link name="world"/>
+
+  <!-- World fixed joint-->
+  <joint name="world_fixed0" type="fixed">
+    <origin xyz="0 0 0.2" rpy="0 0 0"/>
+    <parent link="world"/>
+    <child link="empty_wheel_0_0"/>
+  </joint>
+
+  <xacro:wheel wheel_num="0" modul_num="0"/>-->
+
+
+</robot>

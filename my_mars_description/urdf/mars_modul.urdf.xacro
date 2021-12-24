@@ -1,0 +1,308 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <material name="red">
+        <color rgba="0.8 0 0 1"/>
+    </material>
+
+    <material name="green">
+        <color rgba="0 0.8 0 1"/>
+    </material>
+
+    <material name="blue">
+        <color rgba="0 0 0.8 1"/>
+    </material>
+
+    <material name="white">
+        <color rgba="1 1 1 1" />
+    </material>
+
+    <material name="black">
+        <color rgba="0 0 0 1" />
+    </material>
+
+    <xacro:property name="module_height" value="0.01" />
+
+    <xacro:macro name="empty_inertial" params="">
+        <inertial>
+            <mass value="0.0001" />
+            <inertia
+                    ixx="0.0001" ixy="0.0" ixz="0.0"
+                    iyy="0.0001" iyz="0.0"
+                    izz="0.0001" />
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="empty_gazebo_link" params="">
+        <visual>
+            <geometry>
+                <sphere radius="0.005"/>
+            </geometry>
+            <material name="red" />
+        </visual>
+        <xacro:empty_inertial />
+    </xacro:macro>
+
+    <xacro:macro name="cylinder_inertial" params="r l m">
+        <inertial>
+            <mass value="${m}" />
+            <inertia
+                    ixx="${(1.0/12.0)*m*(3.0*r*r + l*l)}" ixy="0.0" ixz="0.0"
+                    iyy="${(1.0/12.0)*m*(3.0*r*r + l*l)}" iyz="0.0"
+                    izz="${(1.0/2.0)*m*r*r}" />
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="box_inertial" params="w h d m">
+        <inertial>
+            <mass value="${m}" />
+            <inertia
+                    ixx="${(1.0/12.0)*m*(h*h + d*d)}" ixy="0.0" ixz="0.0"
+                    iyy="${(1.0/12.0)*m*(w*w + d*d)}" iyz="0.0"
+                    izz="${(1.0/12.0)*m*(w*w + h*h)}" />
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="revolute_transmission" params="joint_name reduction">
+        <transmission name="${joint_name}_transmission">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="${joint_name}_motor">
+                <mechanicalReduction>${reduction}</mechanicalReduction>
+            </actuator>
+            <joint name="${joint_name}">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+    </xacro:macro>
+
+    <xacro:macro name="continuous_transmission" params="joint_name reduction">
+        <transmission name="${joint_name}_transmission">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="${joint_name}_motor">
+                <mechanicalReduction>${reduction}</mechanicalReduction>
+            </actuator>
+            <joint name="${joint_name}">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+    </xacro:macro>
+
+    <xacro:macro name="mars_module" params="prefix">
+
+        <link name="world"/>
+    	    <!-- World fixed joint-->
+        <joint name="world_fixed" type="fixed">
+    		<origin xyz="0 0 0" rpy="0 0 0"/>
+    		<parent link="world"/>
+    		<child link="${prefix}_base_link"/>
+  		</joint>
+        <link name="${prefix}_base_link" />
+
+        <link name="${prefix}_axial_front_connector_link">
+            <xacro:empty_gazebo_link />
+        </link>
+
+        <link name="${prefix}_axial_back_connector_link">
+            <xacro:empty_gazebo_link />
+        </link>
+
+        <joint name="${prefix}_axial_front_connector_fixed" type="fixed">
+            <origin xyz="0.035 0 0" rpy="0 0 0" />
+            <parent link="${prefix}_base_link" />
+            <child link="${prefix}_axial_front_connector_link" />
+        </joint>
+
+        <joint name="${prefix}_axial_back_connector_fixed" type="fixed">
+            <origin xyz="-0.035 0 0" rpy="0 0 0" />
+            <parent link="${prefix}_base_link" />
+            <child link="${prefix}_axial_back_connector_link" />
+        </joint>
+
+        <link name="${prefix}_axial_roll_link">
+            <visual>
+                <origin xyz="0 -0.0175 0" rpy="0 0 0" />
+                <geometry>
+                    <box size="0.07 0.035 ${module_height}" />
+                </geometry>
+                <material name="blue"/>
+            </visual>
+            <xacro:box_inertial w="0.07" h="0.035" d="${module_height}" m="0.05"/>
+        </link>
+
+        <joint name="${prefix}_axial_roll_joint" type="revolute">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <parent link="${prefix}_base_link" />
+            <child link="${prefix}_axial_roll_link" />
+            <axis xyz="1 0 0"/>
+            <limit effort="100.0" lower="-${pi/2}" upper="${pi/2}" velocity="5.0" />
+        </joint>
+
+        <xacro:revolute_transmission joint_name="${prefix}_axial_roll_joint" reduction="1" />
+
+        <link name="${prefix}_axial_pitch_link">
+            <visual>
+                <origin xyz="0 -0.0175 0" rpy="0 0 0" />
+                <geometry>
+                    <box size="0.07 0.035 ${module_height}" />
+                </geometry>
+                <material name="green"/>
+            </visual>
+            <xacro:box_inertial w="0.07" h="0.035" d="${module_height}" m="0.05"/>
+        </link>
+
+        <joint name="${prefix}_axial_pitch_joint" type="revolute">
+            <origin xyz="0 0.035 0" rpy="0 0 0" />
+            <parent link="${prefix}_axial_roll_link" />
+            <child link="${prefix}_axial_pitch_link" />
+            <axis xyz="0 1 0" />
+            <limit effort="100.0" lower="-${pi/2}" upper="${pi/2}" velocity="5.0" />
+        </joint>
+
+        <xacro:revolute_transmission joint_name="${prefix}_axial_pitch_joint" reduction="1" />
+
+        <link name="${prefix}_left_axial_base_link">
+            <xacro:empty_gazebo_link />
+        </link>
+
+        <joint name="${prefix}_left_axial_base_fixed" type="fixed">
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <parent link="${prefix}_axial_pitch_link" />
+            <child link="${prefix}_left_axial_base_link" />
+        </joint>
+
+        <link name="${prefix}_right_axial_base_link">
+            <xacro:empty_gazebo_link />
+        </link>
+
+        <joint name="${prefix}_right_axial_base_fixed" type="fixed">
+            <origin xyz="0 -0.035 0" rpy="0 0 0" />
+            <parent link="${prefix}_base_link" />
+            <child link="${prefix}_right_axial_base_link" />
+        </joint>
+
+        <xacro:macro name="module_side" params="axial_base_link side y_reflect">
+            <link name="${prefix}_${side}_base_link">
+                <visual>
+                    <origin xyz="0 ${0.0175 * y_reflect} 0" rpy="0 0 0" />
+                    <geometry>
+                        <box size="0.07 0.125 ${module_height}" />
+                    </geometry>
+                    <material name="red"/>
+                </visual>
+                <collision>
+                    <origin xyz="0 ${0.0175 * y_reflect} 0" rpy="0 0 0" />
+                    <geometry>
+                        <box size="0.07 0.125 ${module_height}" />
+                    </geometry>
+                </collision>
+                <xacro:box_inertial w="0.07" h="0.125" d="${module_height}" m="0.25"/>
+            </link>
+
+            <joint name="${prefix}_${side}_base_fixed" type="fixed">
+                <origin xyz="0 ${0.045 * y_reflect} 0" rpy="0 0 0" />
+                <parent link="${axial_base_link}" />
+                <child link="${prefix}_${side}_base_link" />
+            </joint>
+
+            <link name="${prefix}_${side}_connector_link">
+                <xacro:empty_gazebo_link />
+            </link>
+
+            <joint name="${prefix}_${side}_connector_fixed" type="fixed">
+                <origin xyz="0 ${0.1 * y_reflect} 0" rpy="0 0 0"/>
+                <parent link="${prefix}_${side}_base_link" />
+                <child link="${prefix}_${side}_connector_link" />
+            </joint>
+
+            <xacro:module_wheel side_base_link="${prefix}_${side}_base_link"
+                                side="${side}" location="front"
+                                y_reflect="${y_reflect}" rot_reflect="${y_reflect * 1}"/>
+            <xacro:module_wheel side_base_link="${prefix}_${side}_base_link"
+                                side="${side}" location="rear"
+                                y_reflect="${y_reflect}" rot_reflect="${y_reflect * -1}" />
+        </xacro:macro>
+
+        <xacro:macro name="module_wheel" params="side_base_link side location y_reflect rot_reflect">
+            <link name="${prefix}_${side}_${location}_wheel_base_link">
+                <visual>
+                    <origin xyz="0 ${0.040 * y_reflect} 0" rpy="0 0 0" />
+                    <geometry>
+                        <box size="0.035 0.08 ${module_height}" />
+                    </geometry>
+                    <material name="green" />
+                </visual>
+                <collision>
+                    <origin xyz="0 ${0.040 * y_reflect} 0" rpy="0 0 0" />
+                    <geometry>
+                        <box size="0.035 0.08 ${module_height}" />
+                    </geometry>
+                </collision>
+                <xacro:empty_inertial />
+            </link>
+
+            <link name="${prefix}_${side}_${location}_wheel_mount_link">
+                <xacro:empty_gazebo_link />
+            </link>
+
+            <joint name="${prefix}_${side}_${location}_wheel_base_fixed" type="fixed">
+                <origin xyz="0 0.0 0" rpy="0 0 ${-(pi/4) * rot_reflect}" />
+                <parent link="${side_base_link}" />
+                <child link="${prefix}_${side}_${location}_wheel_base_link" />
+            </joint>
+
+            <joint name="${prefix}_${side}_${location}_wheel_mount_fixed" type="fixed">
+                <origin xyz="0.0 ${0.08 * y_reflect} 0" rpy="0 0 0" />
+                <parent link="${prefix}_${side}_${location}_wheel_base_link" />
+                <child link="${prefix}_${side}_${location}_wheel_mount_link" />
+            </joint>
+
+            <link name="${prefix}_${side}_${location}_wheel_link">
+                <visual>
+                    <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                    <geometry>
+                        <cylinder radius="0.035" length="0.01" />
+                    </geometry>
+                    <material name="blue" />
+                </visual>
+                <collision>
+                    <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                    <geometry>
+                        <cylinder radius="0.035" length="0.01" />
+                    </geometry>
+                </collision>
+                <xacro:empty_inertial />
+            </link>
+
+            <joint name="${prefix}_${side}_${location}_wheel" type="continuous">
+                <origin xyz="0 ${0.015 * y_reflect} 0" rpy="0 0 0" />
+                <axis xyz="0 1 0" />
+                <parent link="${prefix}_${side}_${location}_wheel_mount_link" />
+                <child link="${prefix}_${side}_${location}_wheel_link" />
+            </joint>
+
+            <xacro:continuous_transmission joint_name="${prefix}_${side}_${location}_wheel" reduction="1" />
+        </xacro:macro>
+
+        <xacro:module_side axial_base_link="${prefix}_left_axial_base_link" side="left" y_reflect="1" />
+        <xacro:module_side axial_base_link="${prefix}_right_axial_base_link" side="right" y_reflect="-1" />
+
+    </xacro:macro>
+
+    <xacro:mars_module prefix="001"/>
+
+
+    <!--
+    <gazebo>
+        <plugin name="ros_force_based_move" filename="libgazebo_ros_force_based_move.so">
+            <commandTopic>cmd_vel</commandTopic>
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>/odom</odometryFrame>
+            <yaw_velocity_p_gain>10000.0</yaw_velocity_p_gain>
+            <x_velocity_p_gain>10000.0</x_velocity_p_gain>
+            <y_velocity_p_gain>10000.0</y_velocity_p_gain>
+            <robotBaseFrame>base_link</robotBaseFrame>
+            <odometryRate>100.0</odometryRate>
+            <publishTF>false</publishTF>
+        </plugin>
+    </gazebo>
+    -->
+</robot>

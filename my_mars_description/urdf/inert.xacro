@@ -1,0 +1,43 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">  
+    <xacro:macro name="empty_inertial" params="">
+        <inertial>
+            <mass value="0.0001" />
+            <inertia
+                    ixx="0.0001" ixy="0.0" ixz="0.0"
+                    iyy="0.0001" iyz="0.0"
+                    izz="0.0001" />
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="empty_gazebo_link" params="">
+        <visual>
+            <geometry>
+                <sphere radius="0.005"/>
+            </geometry>
+            <material name="red" />
+        </visual>
+        <xacro:empty_inertial />
+    </xacro:macro>
+
+    <xacro:macro name="cylinder_inertial" params="r l m">
+        <inertial>
+            <mass value="${m}" />
+            <inertia
+                    ixx="${(1.0/12.0)*m*(3.0*r*r + l*l)}" ixy="0.0" ixz="0.0"
+                    iyy="${(1.0/12.0)*m*(3.0*r*r + l*l)}" iyz="0.0"
+                    izz="${(1.0/2.0)*m*r*r}" />
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="box_inertial" params="w h d m">
+        <inertial>
+            <mass value="${m}" />
+            <inertia
+                    ixx="${(1.0/12.0)*m*(h*h + d*d)}" ixy="0.0" ixz="0.0"
+                    iyy="${(1.0/12.0)*m*(w*w + d*d)}" iyz="0.0"
+                    izz="${(1.0/12.0)*m*(w*w + h*h)}" />
+        </inertial>
+    </xacro:macro>
+
+</robot>
+
