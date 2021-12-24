@@ -1,0 +1,17 @@
+<launch>
+  <arg name="use_gui"        default="true" />
+  <param name="robot_description"
+         command="$(find xacro)/xacro --inorder '$(find my_mars_description)/urdf/mars_modul_robot.urdf.xacro'"/>
+
+  <!-- Send joint values -->
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
+    <param name="/use_gui" value="$(arg use_gui)"/>
+  </node>
+
+  <!-- Combine joint values to TF-->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+  <!-- Show in Rviz -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find my_mars_description)/rviz/mars.rviz"/>
+</launch>
+
